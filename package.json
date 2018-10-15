@@ -1,0 +1,63 @@
+{
+  "name": "coretool",
+  "version": "1.0.0",
+  "description": "Javasacript Bitcoin tooling on top of Bitcoin Core",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "NODE_ENV=${NODE_ENV:-dev} NETWORK=${NETWORK:-mainnet} ava --verbose",
+    "mocha": "NODE_ENV=test mocha --compilers js:@babel/register -r babel-polyfill --timeout 10000",
+    "build": "babel src -s -D -d dist",
+    "local": "NODE_ENV=dev NETWORK=${NETWORK:-mainnet} babel-watch src/index.js",
+    "localdist": "NODE_ENV=dev NETWORK=${NETWORK:-mainnet} node dist/",
+    "dev": "pm2 startOrReload ecosystem.dev.json",
+    "start": "pm2 startOrReload ecosystem.json"
+  },
+  "ava": {
+    "require": [
+      "@babel/polyfill",
+      "@babel/register"
+    ]
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "@sendgrid/mail": "^6.3.1",
+    "axios": "^0.17.1",
+    "big.js": "^5.0.3",
+    "bitcoinjs-lib": "^4.0.1",
+    "bluebird": "^3.5.2",
+    "bs58check": "^2.1.2",
+    "config": "^1.28.1",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "express-rate-limit": "^3.1.0",
+    "express-winston": "^2.6.0",
+    "fs-extra": "^4.0.2",
+    "jsonwebtoken": "^8.1.0",
+    "moment": "^2.22.2",
+    "mongoose": "^5.0.3",
+    "node-redis-pubsub": "^3.0.0",
+    "pretty-hrtime": "^1.0.3",
+    "random-js": "^1.0.8",
+    "redis": "^2.8.0",
+    "rpc-client": "^1.0.1",
+    "rxjs": "^5.5.2",
+    "shortid": "^2.2.8",
+    "socket.io": "^2.0.4",
+    "socket.io-redis": "^5.2.0",
+    "uteel-sender": "^1.0.5",
+    "valid-url": "^1.0.9",
+    "winston": "^3.0.0",
+    "zeromq": "^4.6.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "ava": "1.0.0-beta.8",
+    "babel-watch": "github:monathur/babel-watch"
+  },
+  "author": "larafale <as1cron@gmail.com>",
+  "license": "ISC"
+}

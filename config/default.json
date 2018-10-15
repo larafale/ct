@@ -1,0 +1,15 @@
+{
+  "port": [4002, 4003],
+  "bitcoind": ["bitcoind://user:password@mainnet:port", "bitcoind://user:password@testnet:port"],
+  "electrumx": ["electrumx://user:password@mainnet:port", "electrumx://user:password@testnet:port"],
+  "jwt": { "secret": "mYFuc1<1ng5ecReT", "expires": "10d" },
+  "mongodb": "mongodb://localhost:27017/coretool",
+  "redis": "redis://localhost:6379",
+  "weburi": "http://localhost:4001", 
+  "mail": {
+      "apikey": ""
+    , "forceTo": ""
+    , "mock": true
+    , "debug": true
+  }
+}

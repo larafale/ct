@@ -1,0 +1,22 @@
+{
+    "apps" : [
+      {
+        "name": "coretool-production-mainnet",
+        "script": "dist/index.js",
+        "log_date_format" : "YYYY-MM-DD HH:mm",
+        "env": {
+          "NODE_ENV": "production",
+          "NETWORK": "mainnet"
+        }
+      },
+      {
+        "name": "coretool-production-testnet",
+        "script": "dist/index.js",
+        "log_date_format" : "YYYY-MM-DD HH:mm",
+        "env": {
+          "NODE_ENV": "production",
+          "NETWORK": "testnet"
+        }
+      }
+    ]
+}
