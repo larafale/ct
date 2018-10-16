@@ -333,7 +333,7 @@ Schema.statics = {
   processOutput: async function({ type, output, height, meta }) {
     return new Promise(async (resolve, reject) => {
       try{
-        const invoice = await this.get(meta && meta.iid)
+        let invoice = await this.get(meta && meta.iid)
         const wallet = await Wallet.get(invoice.wid)
         let hasChanged = false
 

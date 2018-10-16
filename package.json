@@ -10,7 +10,7 @@
     "local": "NODE_ENV=dev NETWORK=${NETWORK:-mainnet} babel-watch src/index.js",
     "localdist": "NODE_ENV=dev NETWORK=${NETWORK:-mainnet} node dist/",
     "dev": "pm2 startOrReload ecosystem.dev.json",
-    "start": "pm2 startOrReload ecosystem.json"
+    "start": "npm run build && pm2 startOrReload ecosystem.json"
   },
   "ava": {
     "require": [
