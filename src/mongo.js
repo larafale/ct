@@ -2,6 +2,7 @@ import config from './config'
 import mongoose from 'mongoose'
 
 mongoose.Promise = global.Promise
+mongoose.set('useCreateIndex', true)
 
 const db = mongoose.connection
 

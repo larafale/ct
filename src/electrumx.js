@@ -72,7 +72,7 @@ socket.on('data', (data) => {
       else resolves[line.id] && resolves[line.id](line.result)
     })
   }catch(e){
-    log('electrumx', 'error', e)
+    log.error('electrumx', e)
   }
 })
 

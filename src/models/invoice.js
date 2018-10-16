@@ -333,7 +333,8 @@ Schema.statics = {
   processOutput: async function({ type, output, height, meta }) {
     return new Promise(async (resolve, reject) => {
       try{
-        let invoice = await this.get(meta && meta.iid)
+        const invoice = await this.get(meta && meta.iid)
+        const wallet = await Wallet.get(invoice.wid)
         let hasChanged = false
 
         // match if address match then delete unneeded output values
@@ -365,7 +366,7 @@ Schema.statics = {
 
           // update price info if missing
           if(!invoice.price.ts) {
-            try { invoice.price = await Prices.convert(invoice.tx.satoshis, 'satoshis', 'eur') }
+            try { invoice.price = await Prices.convert(invoice.tx.satoshis, 'satoshis', wallet.fiat) }
             catch(e){ console.log('fetch price error', e.message) }
           }
 
