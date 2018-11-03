@@ -69,7 +69,7 @@ Schema.virtual('auth')
 
 Schema.virtual('amount')
   .set(function (value) { this._amount = value })
-  .get(function () { return this._amount || {} })
+  .get(function () { return this._amount })
 
 Schema.virtual('spread')
   .get(function () { 
@@ -86,30 +86,51 @@ Schema.virtual('spread')
 Schema.pre('validate', async function(next) {
   const invoice = this
 
+  const wallet = !invoice.wid
+    ? await Wallet.getDefault(invoice.uid)
+    : await Wallet.get(invoice.wid)
+
   // invalidate protected fields in case of update
   if(!this.isNew && !isAuthRoot(this.auth)){
     protectedFields.forEach(key => invoice.isModified(key) && invoice.invalidate(key, `The '${key}' field is protected`))
   }
 
+  if(!this.uid && wallet.authOnly && !this.auth.sub)
+    return next(`wallet.authOnly is true, you cannot create an invoice without providing an apikey.`)
+
+  // when not providing token, uid must be fetched from wallet
+  if(!this.uid) this.uid = wallet.uid
+  // if no wid is bound, attach wallet id
+  if(!this.wid) this.wid = wallet.id
+
+  // wallet always override invoice network 
+  if(this.isNew) this.network = wallet.network
+
   // at invoice creation, if no address is provided we ask the wallet for one.
-  if(this.isNew && !this.address){
+  if(this.isNew && !invoice.address){
     try {
-      const wallet = await Wallet.get(this.wid)
       const { address, cursor } = await wallet.nextAddress()
       this.address = address
       this.cursor = cursor
     }catch(e){
       invoice.invalidate('wid', e.message || e)
+      return next(e)
     }
   }
 
-  if(this.amount.value){
-    try { 
-      const wallet = await Wallet.get(this.wid)
-      const { ticker, fiat } = wallet
-      this.price = await Prices.convert(this.amount.value, this.amount.ticker || ticker, this.amount.fiat || fiat) 
+  if(this.amount){
+    let value, ticker, fiat
+    if     (typeof this.amount == 'string'){ [ value, ticker, fiat ] = this.amount.split('-') }
+    else if(Array.isArray(this.amount)){ [value, ticker, fiat] = this.amount }
+    else if(typeof this.amount == 'object'){ value = this.amount.value; ticker = this.amount.ticker; fiat = this.amount.fiat }
+    // console.log({ value, ticker, fiat })
+
+    try {
+      const { ticker: defaultTicker, fiat: defaultFiat } = wallet
+      this.price = await Prices.convert(value, ticker || defaultTicker, fiat || defaultFiat) 
+    }catch(e){ 
+      invoice.invalidate('amount', e.message) 
     }
-    catch(e){ invoice.invalidate('amount', e.message) }
   }
 
   next()
@@ -120,6 +141,7 @@ Schema.pre('save', async function(next){
 
   if(invoice.isNew){
     invoice.wasNew = true
+
 
     // get expires settings from wallet
     const wallet = await Wallet.get(this.wid)
@@ -219,7 +241,7 @@ Schema.statics = {
            (typeof id === 'object' && id)
         || (typeof id === 'string' && { $or: [{_id: id}] })
 
-      query = { ...query, network: config.network }
+      query = { ...query } // no need to restrict by network when getting by id (network: config.network)
 
       const invoice = await this.findOne(query)
       return invoice ? resolve(invoice) : reject(`invoice '${id}' not found`)
@@ -336,6 +358,7 @@ Schema.statics = {
         let invoice = await this.get(meta && meta.iid)
         const wallet = await Wallet.get(invoice.wid)
         let hasChanged = false
+        output = JSON.parse(JSON.stringify(output)) // clone ouput (because we delete some props)
 
         // match if address match then delete unneeded output values
         if(output.address != invoice.address) throw new Error('Invoice process error')
@@ -399,12 +422,16 @@ Schema.statics = {
   },
 
   processOutputs: async function(outputs, type, height) {
-    outputs.forEach(output => this.processOutput({
-        type
-      , output
-      , height
-      , meta: watchlist.get(output.address) 
-    }))
+    return Promise.all(
+      outputs.map(output => { 
+        return this.processOutput({
+            type
+          , output
+          , height
+          , meta: watchlist.get(output.address)
+        })
+      })
+    )
     // .then(e => console.log('process result', !!e, type) )
     // .catch(e => console.log('process error', e) )
   },

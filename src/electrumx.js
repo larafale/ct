@@ -112,28 +112,34 @@ export const listunspent = async addresses => {
   return new Promise(async (resolve, reject) => {
     addresses = asArray(addresses)
 
-    Promise.all(addresses.map(
-      a => socket.call('blockchain.scripthash.listunspent', addressToScriptHash(a, 'reverse'))
-    ))
-    .then(utxos => {
-      const utxosByAddress = {}
-      utxos.map((unspents, index) => { 
-        const address = addresses[index]
+    try{
+      
+      Promise.all(addresses.map(
+        a => socket.call('blockchain.scripthash.listunspent', addressToScriptHash(a, 'reverse'))
+      ))
+      .then(utxos => {
+        const utxosByAddress = {}
+        utxos.map((unspents, index) => { 
+          const address = addresses[index]
 
-        // append address to utxo
-        unspents = unspents.map(v => {
-          v.address = address
-          return v
+          // append address to utxo
+          unspents = unspents.map(v => {
+            v.address = address
+            return v
+          })
+          
+          utxosByAddress[address] = unspents 
         })
-        
-        utxosByAddress[address] = unspents 
-      })
 
-      resolve(utxosByAddress)
-    }) 
-    .catch(err => {
+        resolve(utxosByAddress)
+      }) 
+      .catch(err => {
+        reject(err)
+      }) 
+
+    }catch(err){
       reject(err)
-    }) 
+    }
   })
 }
 

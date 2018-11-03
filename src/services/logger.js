@@ -7,7 +7,7 @@ import expressWinston from 'express-winston'
 const Format = winston.format
 const Cache = {}
 
-let logFilter = /.*/
+let logFilter = (process.env.LOG && new RegExp(process.env.LOG)) || /.*/
 export const setLogFilter = (filter) => { logFilter = filter }
 export const doFilter = (filter) => { logFilter = filter }
 
@@ -133,6 +133,7 @@ export const expressLogger = ({
       })
     // , msg: "{{req.date}} [http] {{req.method}} {{req.endpoint}} {{res.statusCode}}"
     , msg: `[http]`
+    , skip: (req, res) => { return !logFilter.test('http') }
     , requestWhitelist: ['userIP', 'method', 'endpoint', 'body']
     , responseWhitelist: ['statusCode']
     , bodyBlacklist: ['token', 'xpub']

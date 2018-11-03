@@ -34,6 +34,7 @@ const Schema = new mongoose.Schema({
   ticker:       { type: String, default: 'mbtc' },
   fiat:         { type: String, default: 'usd' },
   expires:      { type: Number, default: 20, min: 1, max: 1440 }, // number of minutes before epiration
+  authOnly:     { type: Boolean, default: true }, // by default, you cannot create invoice without auth
 
   cat: { type: Date, default: Date.now }
 }, { collection: 'wallets', versionKey: false })
@@ -171,10 +172,21 @@ Schema.statics = {
            (typeof id === 'object' && id)
         || (typeof id === 'string' && { $or: [{_id: id}] })
 
-      query = { ...query, network: config.network }
+      query = { ...query }
 
       const wallet = await this.findOne(query)
       return wallet ? resolve(wallet) : reject(`wallet '${id}' not found`)
+    }) 
+  },
+
+  // return default wallet of an user
+  getDefault: async function(uid) {
+    return new Promise(async (resolve, reject) => {
+      if(!uid) return reject(`no uid provided, can't find default wallet`)
+
+      let query = { uid, network: config.network }
+      const wallet = await this.findOne(query)
+      return wallet ? resolve(wallet) : reject(`no default wallet found for uid "${uid}"`)
     }) 
   },
 
