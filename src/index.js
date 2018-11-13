@@ -121,6 +121,12 @@ try {
     })
 
 
+    process.on('unhandledRejection', (err) => {  
+      console.error('Unhandled Promise Rejection => ', err.message || err)
+      console.error('err ', err)
+      // process.exit(1)
+    })
+
     process.on('warning', e => console.warn(e.stack));
 
     // gracefull shutdown of services

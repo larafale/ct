@@ -1,9 +1,9 @@
 import config from './config'
 import ZMQ from 'zeromq'
-const url = require('url')
-import EventEmitter from './lib/EventEmitter'
 import Tx from './tx'
 import Block from './block'
+const url = require('url')
+const EventEmitter = require('events')
  
 const { bitcoind, network } = config
 

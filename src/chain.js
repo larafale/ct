@@ -2,7 +2,6 @@ import config from './config'
 import _ from 'lodash'
 import fs from 'fs-extra'
 
-import EventEmitter from './lib/EventEmitter'
 import { Observable } from 'rxjs/Observable'
 
 import zmq from './zmq'
@@ -11,7 +10,7 @@ import bitcoind from './bitcoind'
 import Block from './block'
 
 
-class Chain extends EventEmitter {
+class Chain {
   
   constructor() {
     super()  
