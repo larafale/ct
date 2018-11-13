@@ -17,11 +17,12 @@ const limiter = rateLimit({
     windowMs: 10 * 60 * 1000 // 10 minutes
   , max: 10
   , keyGenerator: (req, res) => { return req.userIP }
-  , handler: (req, res) => { toRes(res, 429)(`Too many calls from this IP (${req.userIP}), please try again in 10min.`) }
+  // , handler: (req, res) => { toRes(res, 429)(`Too many calls from this IP (${req.userIP}), please try again in 10min.`) }
+  , handler: (req, res) => { toRes(res, 429)(`Rate limit reached, try again in 10min.`) }
   , onLimitReached: (req, res, options) => { console.log(`rate limit reached`, options) }
 })
 
-router.use(limiter)
+// router.use(limiter) 
 
 
 router.get('/tx/:hash', async ({ params, query }, res) => {

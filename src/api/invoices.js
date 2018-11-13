@@ -13,13 +13,13 @@ router.get('/', auth(), async ({ auth }, res) => {
 })
 
 // Create invoice (via POST or GET)
-router.post('/', auth(), ({ auth, body }, res) => {
+router.post('/', auth('*'), ({ auth, body }, res) => {
   const invoice = new Invoice(body) 
   invoice.uid = auth.sub
   invoice.save(toRes(res))
 })
-router.get('/new', auth(), ({ auth, body, query }, res) => {
-  const invoice = new Invoice({ ...body, ...query }) 
+router.get('/new', auth('*'), ({ auth, body, query }, res) => {
+  const invoice = new Invoice({ ...body, ...query })
   invoice.uid = auth.sub
   invoice.save(toRes(res))
 })

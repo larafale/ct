@@ -31,6 +31,7 @@ const Schema = new mongoose.Schema({
   slug:         { type: String },
   firstname:    { type: String },
   lastname:     { type: String },
+  apikeys:      [{ type: String }],
 
   cat: { type: Date, default: Date.now }
 }, { collection: 'users', versionKey: false })
@@ -70,8 +71,12 @@ Schema.pre('validate', function(next) {
 Schema.pre('save', async function(next){
   let user = this
 
+  if(!user.apikeys.length)
+    user.apikeys.push(user.jwt())
+
   if(user.isNew){
     user.wasNew = true
+    user.role = '' // force role to nothing (default)
   }
 
   next()

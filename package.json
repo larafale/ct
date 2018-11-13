@@ -4,13 +4,13 @@
   "description": "Javasacript Bitcoin tooling on top of Bitcoin Core",
   "main": "./dist/index.js",
   "scripts": {
-    "test": "NODE_ENV=${NODE_ENV:-dev} NETWORK=${NETWORK:-mainnet} ava --verbose",
+    "test": "NODE_ENV=test NETWORK=${NETWORK:-mainnet} ava --verbose",
     "mocha": "NODE_ENV=test mocha --compilers js:@babel/register -r babel-polyfill --timeout 10000",
     "build": "babel src -s -D -d dist",
     "local": "NODE_ENV=dev NETWORK=${NETWORK:-mainnet} babel-watch src/index.js",
     "localdist": "NODE_ENV=dev NETWORK=${NETWORK:-mainnet} node dist/",
     "dev": "pm2 startOrReload ecosystem.dev.json",
-    "start": "pm2 startOrReload ecosystem.json"
+    "start": "npm run build && pm2 startOrReload ecosystem.json"
   },
   "ava": {
     "require": [
@@ -56,7 +56,8 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/register": "^7.0.0",
     "ava": "1.0.0-beta.8",
-    "babel-watch": "github:monathur/babel-watch"
+    "babel-watch": "github:monathur/babel-watch",
+    "supertest": "^3.3.0"
   },
   "author": "larafale <as1cron@gmail.com>",
   "license": "ISC"

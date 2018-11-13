@@ -1,4 +1,5 @@
 /data
+/config/test.json
 /config/dev.json
 /config/production.json
 /scripts

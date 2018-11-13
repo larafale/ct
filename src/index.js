@@ -9,7 +9,7 @@ import ctx from './ctx'
 import chain from './chain'
 import stream from './stream'
 import Block from './block'
-import expressapp, { server } from './express'
+import { server } from './express'
 import mongoCon, { initMongo } from './mongo'
 import { initRedis, redisAdapter, pubsub } from './redis'
 import io from './io'
@@ -45,9 +45,9 @@ try {
     log('io', 'ready', { port: config.port })
 
  
-    initElectrumx()
-      .then(client => log('electrumx', 'ready', client.options))
-      .catch(err => log.error('electrumx', err))
+    // initElectrumx()
+    //   .then(client => log('electrumx', 'ready', client.options))
+    //   .catch(err => log.error('electrumx', err))
 
 
     initRedis()

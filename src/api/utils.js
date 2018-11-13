@@ -11,9 +11,11 @@ const router = Router()
 export default router 
 
 
-// Given an xpub, return full wallet data structure
+// derive an xpubkey
 router.get('/derive/:pubkey', async ({ params, query }, res) => {
-  try { toRes(res)(null, Address.derive(params.pubkey, { end: query.end })) }
+  const limit = { start: parseInt(query.start, 10) || 0, end: parseInt(query.end, 10) || 0 }
+  if(limit.end && (limit.end-limit.start) > 100) return toRes(res, 400)('maximum of 100 derivations per call')
+  try { toRes(res)(null, Address.derive(params.pubkey, { start: query.start, end: query.end })) }
   catch(e) { toRes(res, 400)(e) }
 })
 
@@ -24,6 +26,7 @@ router.get('/wallet/:pubkey', async ({ params }, res) => {
 }) 
 
 // get utxos from addresses
+// /utxos/adr1,adr2,adr3...
 router.get('/utxos/:addresses', async ({ params }, res) => {
   try { toRes(res)(null, await listunspent(params.addresses)) }
   catch(e) { toRes(res, 400)(e) }
