@@ -12,11 +12,6 @@ import Block from './block'
 
 class Chain {
   
-  constructor() {
-    super()  
-  }
-
-
   tip() { return bitcoind.call('getblockcount') }
   getinfo() { return bitcoind.call('getblockchaininfo') }
   mempool() { return bitcoind.call('getmempoolinfo') }
