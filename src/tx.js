@@ -3,7 +3,6 @@ import config from './config'
 import fs from 'fs-extra'
 import bjs, { Transaction, networks, script as Script, payments as Payments, crypto, ECPair } from 'bitcoinjs-lib'
 import Address from './address'
-import { dump } from './utils'
 import { Scale } from './lib/Prices'
 
 
@@ -94,10 +93,8 @@ const parseOutput = (el, { network = 'mainnet' } = {}) => {
 
     const output = {
         satoshis: el.value
-      , address: ''
+      , address: Address.fromOutputScript(el.script, network).toString()
     }
-
-    output.address = Address.fromOutputScript(el.script, network).toString()
 
     // TODO delete
     // switch(output.scriptPubKey.type){

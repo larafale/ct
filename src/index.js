@@ -45,9 +45,9 @@ try {
     log('io', 'ready', { port: config.port })
 
  
-    // initElectrumx()
-    //   .then(client => log('electrumx', 'ready', client.options))
-    //   .catch(err => log.error('electrumx', err))
+    initElectrumx()
+      .then(client => log('electrumx', 'ready', client.options))
+      .catch(err => log.error('electrumx', err))
 
 
     initRedis()
