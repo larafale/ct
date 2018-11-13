@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { auth, load, own, toRes } from './mw'
 import _ from 'lodash'
-import Address from '../address'
+import Address, { pubkeyTo } from '../address'
 import { listunspent } from '../electrumx'
 
 
@@ -29,6 +29,11 @@ router.get('/wallet/:pubkey', async ({ params }, res) => {
 // /utxos/adr1,adr2,adr3...
 router.get('/utxos/:addresses', async ({ params }, res) => {
   try { toRes(res)(null, await listunspent(params.addresses)) }
+  catch(e) { toRes(res, 400)(e) }
+}) 
+
+router.get('/pubkeyTo/:prefix/:pubkey', async ({ params }, res) => {
+  try { toRes(res)(null, pubkeyTo(params.prefix, params.pubkey)) }
   catch(e) { toRes(res, 400)(e) }
 }) 
 
